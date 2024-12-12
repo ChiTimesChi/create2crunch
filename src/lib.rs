@@ -27,6 +27,8 @@ const WORK_FACTOR: u128 = (WORK_SIZE as u128) / 1_000_000;
 const CONTROL_CHARACTER: u8 = 0xff;
 const MAX_INCREMENTER: u64 = 0xffffffffffff;
 
+const LEADING_EXACT: [u8; 5] = [0xFA, 0xC7, 0x09, 0x10, 0xCC];
+
 static KERNEL_SRC: &str = include_str!("./kernels/keccak256.cl");
 
 /// Requires three hex-encoded arguments: the address of the contract that will
@@ -187,12 +189,19 @@ pub fn cpu(config: Config) -> Result<(), Box<dyn Error>> {
                 // count total and leading zero bytes
                 let mut total = 0;
                 let mut leading = 21;
+                let mut exact_index = 0;
                 for (i, &b) in address.iter().enumerate() {
                     if b == 0 {
                         total += 1;
                     } else if leading == 21 {
-                        // set leading on finding non-zero byte
-                        leading = i;
+                        // Fallback to exact match if leading zeroes ended
+                        if exact_index < LEADING_EXACT.len() && b == LEADING_EXACT[exact_index] {
+                            exact_index += 1;
+                            total += 1;
+                        } else {
+                            // set leading on finding the difference
+                            leading = i;
+                        }
                     }
                 }
 
@@ -510,12 +519,19 @@ pub fn gpu(config: Config) -> ocl::Result<()> {
             // count total and leading zero bytes
             let mut total = 0;
             let mut leading = 21;
+            let mut exact_index = 0;
             for (i, &b) in address.iter().enumerate() {
                 if b == 0 {
                     total += 1;
                 } else if leading == 21 {
-                    // set leading on finding non-zero byte
-                    leading = i;
+                    // Fallback to exact match if leading zeroes ended
+                    if exact_index < LEADING_EXACT.len() && b == LEADING_EXACT[exact_index] {
+                        exact_index += 1;
+                        total += 1;
+                    } else {
+                        // set leading on finding the difference
+                        leading = i;
+                    }
                 }
             }
 
