@@ -27,7 +27,7 @@ const WORK_FACTOR: u128 = (WORK_SIZE as u128) / 1_000_000;
 const CONTROL_CHARACTER: u8 = 0xff;
 const MAX_INCREMENTER: u64 = 0xffffffffffff;
 
-const LEADING_EXACT: [u8; 5] = [0xFA, 0xC7, 0x09, 0x10, 0xCD];
+const LEADING_EXACT: [u8; 3] = [0x10, 0xCD, 0x90];
 
 static KERNEL_SRC: &str = include_str!("./kernels/keccak256.cl");
 
