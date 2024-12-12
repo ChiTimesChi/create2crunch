@@ -196,28 +196,22 @@ static inline void keccakf(ulong *a)
   (!(d[16])) + (!(d[17])) + (!(d[18])) + (!(d[19])) \
 >= TOTAL_ZEROES)
 
-#if LEADING_ZEROES == 8
-#define hasLeading(d) (!(((uint*)d)[0]) && !(((uint*)d)[1]))
-#elif LEADING_ZEROES == 7
-#define hasLeading(d) (!(((uint*)d)[0]) && !(((uint*)d)[1] & 0x00ffffffu))
-#elif LEADING_ZEROES == 6
-#define hasLeading(d) (!(((uint*)d)[0]) && !(((uint*)d)[1] & 0x0000ffffu))
-#elif LEADING_ZEROES == 5
-#define hasLeading(d) (!(((uint*)d)[0]) && !(((uint*)d)[1] & 0x000000ffu))
-#elif LEADING_ZEROES == 4
-#define hasLeading(d) (!(((uint*)d)[0]))
-#elif LEADING_ZEROES == 3
-#define hasLeading(d) (!(((uint*)d)[0] & 0x00ffffffu))
-#elif LEADING_ZEROES == 2
-#define hasLeading(d) (!(((uint*)d)[0] & 0x0000ffffu))
-#elif LEADING_ZEROES == 1
-#define hasLeading(d) (!(((uint*)d)[0] & 0x000000ffu))
-#else
 static inline bool hasLeading(uchar const *d)
 {
 #pragma unroll
+  uint matchIndex = 0;
   for (uint i = 0; i < LEADING_ZEROES; ++i) {
-    if (d[i] != 0) return false;
+    if (d[i] != 0) {
+      switch (matchIndex) {
+        case 0: if (d[i] != 0xFA) return false; break;
+        case 1: if (d[i] != 0xC7) return false; break;
+        case 2: if (d[i] != 0x09) return false; break;
+        case 3: if (d[i] != 0x10) return false; break;
+        case 4: if (d[i] != 0xCC) return false; break;
+        default: return false;
+      }
+      ++matchIndex;
+    }
   }
   return true;
 }
