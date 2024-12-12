@@ -21,7 +21,7 @@ mod reward;
 pub use reward::Reward;
 
 // workset size (tweak this!)
-const WORK_SIZE: u32 = 0x4000000; // max. 0x15400000 to abs. max 0xffffffff
+const WORK_SIZE: u32 = 0xFF00000; // max. 0x15400000 to abs. max 0xffffffff
 
 const WORK_FACTOR: u128 = (WORK_SIZE as u128) / 1_000_000;
 const CONTROL_CHARACTER: u8 = 0xff;
