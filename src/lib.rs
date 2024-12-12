@@ -27,6 +27,9 @@ const WORK_FACTOR: u128 = (WORK_SIZE as u128) / 1_000_000;
 const CONTROL_CHARACTER: u8 = 0xff;
 const MAX_INCREMENTER: u64 = 0xffffffffffff;
 
+// For counting leading bytes we also allow 10CC for aesthetic purposes
+const LEADING_ALLOWED: [u8; 2] = [0x10, 0xCC];
+
 static KERNEL_SRC: &str = include_str!("./kernels/keccak256.cl");
 
 /// Requires three hex-encoded arguments: the address of the contract that will
@@ -190,7 +193,7 @@ pub fn cpu(config: Config) -> Result<(), Box<dyn Error>> {
                 for (i, &b) in address.iter().enumerate() {
                     if b == 0 {
                         total += 1;
-                    } else if leading == 21 {
+                    } else if (leading == 21) && !LEADING_ALLOWED.contains(&b) {
                         // set leading on finding non-zero byte
                         leading = i;
                     }
@@ -513,7 +516,7 @@ pub fn gpu(config: Config) -> ocl::Result<()> {
             for (i, &b) in address.iter().enumerate() {
                 if b == 0 {
                     total += 1;
-                } else if leading == 21 {
+                } else if (leading == 21) && !LEADING_ALLOWED.contains(&b) {
                     // set leading on finding non-zero byte
                     leading = i;
                 }
