@@ -198,8 +198,8 @@ static inline void keccakf(ulong *a)
 
 static inline bool hasLeading(uchar const *d)
 {
-#pragma unroll
   uint matchIndex = 0;
+#pragma unroll
   for (uint i = 0; i < LEADING_ZEROES; ++i) {
     if (d[i] != 0) {
       switch (matchIndex) {
@@ -215,7 +215,6 @@ static inline bool hasLeading(uchar const *d)
   }
   return true;
 }
-#endif
 
 __kernel void hashMessage(
   __constant uchar const *d_message,
