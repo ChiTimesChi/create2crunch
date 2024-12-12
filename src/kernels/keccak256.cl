@@ -211,6 +211,8 @@ static inline bool hasLeading(uchar const *d)
         default: return false;
       }
       ++matchIndex;
+    } else {
+      if (matchIndex != 0) return false;
     }
   }
   return true;
