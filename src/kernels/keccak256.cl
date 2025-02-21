@@ -203,9 +203,7 @@ static inline bool hasLeading(uchar const *d)
   for (uint i = 0; i < LEADING_ZEROES; ++i) {
     if (d[i] != 0) {
       switch (matchIndex) {
-        case 0: if (d[i] != 0x10) return false; break;
-        case 1: if (d[i] != 0xCD) return false; break;
-        case 2: if (d[i] != 0x90) return false; break;
+        case 0: if (d[i] != 0x51) return false; break;
         default: return false;
       }
       ++matchIndex;
